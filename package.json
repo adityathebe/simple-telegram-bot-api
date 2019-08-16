@@ -1,6 +1,6 @@
 {
   "name": "simple-telegram-bot-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple Telegram Bot API wrapper",
   "main": "index.js",
   "scripts": {

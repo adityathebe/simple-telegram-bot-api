@@ -153,8 +153,8 @@ class TelegramBot {
 
       request(messageParams, (err, resp) => {
         if (err) return reject(err);
-        if (resp.data.ok == false) returnreject(resp.data);
-        resolve(resp.data);
+        if (resp.body.ok == false) returnreject(resp.body);
+        resolve(resp.body);
       });
     });
   }
