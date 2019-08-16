@@ -38,7 +38,7 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'sendMessage');
   }
 
-  sendMessage(receiver, message, { parseMode = 'html', disableWebPagePreview = false }) {
+  sendMessage(receiver, message, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
       text: message,
       chat_id: receiver,
@@ -49,7 +49,7 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'sendMessage');
   }
 
-  sendButton(receiver, replyMarkup, message, { parseMode = 'html', disableWebPagePreview = false }) {
+  sendButton(receiver, replyMarkup, message, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
       text: message,
       chat_id: receiver,
@@ -61,7 +61,7 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'sendMessage');
   }
 
-  sendMediaGroup(receiver, inputMediaPhoto, { parseMode = 'html', disableWebPagePreview = false }) {
+  sendMediaGroup(receiver, inputMediaPhoto, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
       media: inputMediaPhoto,
       chat_id: receiver,
@@ -89,13 +89,13 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'deleteMessage');
   }
 
-  editMessage(chat_id, message_id, edited_msg, json_obj, markup = 'html') {
+  editMessage(chatId, messageId, editedMessage, { inlineKeyboardMarkup, parseMode = 'html' } = {}) {
     let jsondata = {
-      text: edited_msg,
-      chat_id: chat_id,
-      message_id: message_id,
-      reply_markup: json_obj,
-      parse_mode: markup,
+      chat_id: chatId,
+      text: editedMessage,
+      message_id: messageId,
+      reply_markup: inlineKeyboardMarkup,
+      parse_mode: parseMode,
     };
 
     return this.makeAPIRequest(jsondata, 'editMessageText');
