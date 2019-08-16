@@ -1,0 +1,28 @@
+{
+  "name": "simple-telegram-bot-api",
+  "version": "0.0.1",
+  "description": "A simple Telegram Bot API wrapper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adityathebe/simple-telegram-bot-api"
+  },
+  "author": "Aditya Thebe <contact@adityathebe.com> (https://www.adityathebe.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adityathebe/simple-telegram-bot-api/issues"
+  },
+  "homepage": "https://github.com/adityathebe/simple-telegram-bot-api#readme",
+  "dependencies": {
+    "request": "^2.88.0"
+  },
+  "keywords": [
+    "telegram",
+    "telegram bot",
+    "telegram bot api",
+    "telegram bot api wrapper"
+  ]
+}
