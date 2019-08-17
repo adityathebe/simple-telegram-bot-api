@@ -1,5 +1,3 @@
-const request = require('request');
-
 const { makeGetRequest, makePostRequest } = require('./utils');
 
 class TelegramBot {
