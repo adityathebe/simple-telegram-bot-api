@@ -49,6 +49,12 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'sendMessage');
   }
 
+  /**
+   * @param {String | Number} receiver chat id of the receiver or username of channel
+   * @param {Object} replyMarkup InlineKeyboardMarkup, ReplyKeyboardMarkup
+   * @param {String} message 
+   * @param {Object} param3 optional params 
+   */
   sendButton(receiver, replyMarkup, message, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
       text: message,
@@ -134,6 +140,49 @@ class TelegramBot {
   makeAPIRequest(jsondata, methodType) {
     const apiEndpoint = `/${this.apiKey}/${methodType}`;
     return makePostRequest(apiEndpoint, jsondata);
+  }
+
+  //////////////////////
+  // Static Functions //
+  //////////////////////
+
+  /**
+   * Returns the necessary markup for inline keyboards
+   * Example inputs:  
+   * `[{text: btn1, payload: payload1}, {text: btn2, payload: payload2}]`  
+   * `[ [{text: btn1, payload: payload1}], [{text: btn2, payload: payload2}] ]`
+   * @typedef {Object} InlineKeyboard
+   * @property {String} text
+   * @property {String} payload
+   * @param {InlineKeyboard[] | Array<InlineKeyboard[]>} items
+   * @return {Object} Inline Keyboard Markup
+   */
+  static makeInlineKeyboardMarkup(items) {
+    const inlineMarkup = {
+      inline_keyboard: [],
+    };
+
+    items.forEach(item => {
+      if (item instanceof Array) {
+        let row = [];
+        item.forEach(inneritem => {
+          row.push({
+            text: inneritem.text,
+            callback_data: inneritem.payload,
+          });
+        });
+        inlineMarkup.inline_keyboard.push(row);
+      } else {
+        inlineMarkup.inline_keyboard.push([
+          {
+            text: item.text,
+            callback_data: item.payload,
+          },
+        ]);
+      }
+    });
+
+    return inlineMarkup;
   }
 }
 
