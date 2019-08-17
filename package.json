@@ -1,6 +1,6 @@
 {
   "name": "simple-telegram-bot-api",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A simple Telegram Bot API wrapper",
   "main": "index.js",
   "scripts": {
@@ -16,13 +16,14 @@
     "url": "https://github.com/adityathebe/simple-telegram-bot-api/issues"
   },
   "homepage": "https://github.com/adityathebe/simple-telegram-bot-api#readme",
-  "dependencies": {
-    "request": "^2.88.0"
-  },
+  "dependencies": {},
   "keywords": [
     "telegram",
     "telegram bot",
     "telegram bot api",
     "telegram bot api wrapper"
-  ]
+  ],
+  "devDependencies": {
+    "dotenv": "^8.0.0"
+  }
 }
