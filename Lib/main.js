@@ -52,8 +52,8 @@ class TelegramBot {
   /**
    * @param {String | Number} receiver chat id of the receiver or username of channel
    * @param {Object} replyMarkup InlineKeyboardMarkup, ReplyKeyboardMarkup
-   * @param {String} message 
-   * @param {Object} param3 optional params 
+   * @param {String} message
+   * @param {Object} param3 optional params
    */
   sendButton(receiver, replyMarkup, message, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
@@ -127,6 +127,15 @@ class TelegramBot {
     return `https://api.telegram.org/file/${this.apiKey}/${filePath}`;
   }
 
+  /**
+   * Get a list of administrators in a chat
+   * @param {String | Number} chatId Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @returns {Promise<Array>} Array of ChatMembers
+   */
+  getChatAdministrators(chatId) {
+    return callSendAPI({ chat_id: chatId }, 'getChatAdministrators');
+  }
+
   setWebhook(webhookUrl) {
     const url = `https://api.telegram.org/${this.apiKey}/setWebhook?url=${webhookUrl}`;
     return makeGetRequest(url);
@@ -148,12 +157,12 @@ class TelegramBot {
 
   /**
    * Returns the necessary markup for inline keyboards
-   * Example inputs:  
-   * `[{text: btn1, payload: payload1}, {text: btn2, payload: payload2}]`  
+   * Example inputs:
+   * `[{text: btn1, payload: payload1}, {text: btn2, payload: payload2}]`
    * `[ [{text: btn1, payload: payload1}], [{text: btn2, payload: payload2}] ]`
    * @typedef {Object} InlineKeyboard
-   * @property {String} text
-   * @property {String} payload
+   * @property {String} text Label text on the button
+   * @property {String} payload Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
    * @param {InlineKeyboard[] | Array<InlineKeyboard[]>} items
    * @return {Object} Inline Keyboard Markup
    */
@@ -181,6 +190,24 @@ class TelegramBot {
         ]);
       }
     });
+
+    return inlineMarkup;
+  }
+
+  /**
+   * Get markup for reply keyboard
+   * @typedef {Object} KeyboardButton This object represents one button of the reply keyboard
+   * @property {String} text Text of the button
+   * @param {Array<KeyboardButton[]>} keyboard Array of button rows, each represented by an Array of KeyboardButton objects
+   * @param {Boolean} resizeKeyboard Requests clients to resize the keyboard vertically for optimal fit
+   * @param {Boolean} oneTimeKeyboard Requests clients to hide the keyboard as soon as it's been used
+   */
+  static makeReplyKeyboardMarkup(keyboard, resizeKeyboard = true, oneTimeKeyboard = false) {
+    const inlineMarkup = {
+      keyboard: keyboard,
+      resize_keyboard: resizeKeyboard,
+      one_time_keyboard: oneTimeKeyboard,
+    };
 
     return inlineMarkup;
   }
