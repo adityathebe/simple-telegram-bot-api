@@ -12,7 +12,7 @@ const message = 'Choose your favorite Premier League club ...';
 const replyKeyboardMarkup = TelegramBot.makeReplyKeyboardMarkup([
   [{ text: 'Arsenal' }],
   [{ text: 'Man City' }, { text: 'Man United' }],
-  [{ text: 'Liverpool' }, { text: ' Chelsea' }, { text: 'Spurs' }],
+  [{ text: 'Liverpool' }, { text: 'Chelsea' }, { text: 'Spurs' }],
 ]);
 
 bot

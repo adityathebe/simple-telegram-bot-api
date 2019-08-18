@@ -38,15 +38,50 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'sendMessage');
   }
 
-  sendMessage(receiver, message, { parseMode = 'html', disableWebPagePreview = false } = {}) {
+  /**
+   * Use this method to send text messages. On success, the sent Message is returned
+   * @param {Number | String} receiver Unique identifier for the target chat or username of the target channel (@channelusername)
+   * @param {String} message Text of the message to be sent
+   * @typedef optionsSendMessage
+   * @property {'html' | 'markdown'} [parseMode] Send Markdown or HTML
+   * @property {Boolean} [disableWebPagePreview] Disables link previews for links in this message
+   * @property {Boolean} [disableNotification] Sends the message silently. Users will receive a notification with no sound.
+   * @property {Number} [replyToMessageId] If the message is a reply, ID of the original message
+   * @param {optionsSendMessage=}
+   */
+  sendMessage(
+    receiver,
+    message,
+    { parseMode = 'html', disableWebPagePreview = false, disableNotification = false, replyToMessageId = null } = {}
+  ) {
     const jsondata = {
       text: message,
       chat_id: receiver,
       parse_mode: parseMode,
       disable_web_page_preview: disableWebPagePreview,
+      disable_notification: disableNotification,
+      reply_to_message_id: replyToMessageId,
     };
 
     return this.makeAPIRequest(jsondata, 'sendMessage');
+  }
+
+  /**
+   * Use this method to forward messages of any kind. On success, the sent Message is returned
+   * @param {Number | String} targetChatId Unique identifier for the target chat or username of the target channel (@channelusername)
+   * @param {Number | String} fromChatId Unique identifier for the chat where the original message was sent (or channel username @channelusername)
+   * @param {Number} messageId Message identifier in the chat specified in fromChatId
+   * @param {Boolean} disableNotification
+   */
+  forwardMessage(targetChatId, fromChatId, messageId, disableNotification = false) {
+    const jsondata = {
+      message_id: messageId,
+      chat_id: targetChatId,
+      from_chat_id: fromChatId,
+      disable_notification: disableNotification,
+    };
+
+    return this.makeAPIRequest(jsondata, 'forwardMessage');
   }
 
   /**
@@ -123,17 +158,49 @@ class TelegramBot {
     return this.makeAPIRequest(jsondata, 'getFile');
   }
 
+  getMe() {
+    return this.makeAPIRequest({}, 'getMe');
+  }
+
   getFileUrl(filePath) {
     return `https://api.telegram.org/file/${this.apiKey}/${filePath}`;
   }
 
   /**
    * Get a list of administrators in a chat
-   * @param {String | Number} chatId Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @param {String | Number} chatId Unique identifier for the target chat or username of the target supergroup or channel (@channelusername)
    * @returns {Promise<Array>} Array of ChatMembers
    */
   getChatAdministrators(chatId) {
     return callSendAPI({ chat_id: chatId }, 'getChatAdministrators');
+  }
+
+  /**
+   * Use this method to kick a user from a group, a supergroup or a channel
+   * @param {Number | String} chatId Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+   * @param {Number} userId Unique identifier of the target user
+   * @param {Number} [untilDate] Date when the user will be unbanned, unix time
+   */
+  kickChatMember(chatId, userId, untilDate) {
+    const jsondata = {
+      chat_id: chatId,
+      user_id: userId,
+      until_date: untilDate,
+    };
+    return callSendAPI(jsondata, 'kickChatMember');
+  }
+
+  /**
+   * Use this method to unban a previously kicked user in a supergroup or channel
+   * @param {Number | String} chatId Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+   * @param {Number} userId Unique identifier of the target user
+   */
+  unbanChatMember(chatId, userId) {
+    const jsondata = {
+      chat_id: chatId,
+      user_id: userId,
+    };
+    return callSendAPI(jsondata, 'unbanChatMember');
   }
 
   setWebhook(webhookUrl) {
@@ -195,7 +262,7 @@ class TelegramBot {
   }
 
   /**
-   * Get markup for reply keyboard
+   * Returns the necessary markup for reply keyboard
    * @typedef {Object} KeyboardButton This object represents one button of the reply keyboard
    * @property {String} text Text of the button
    * @param {Array<KeyboardButton[]>} keyboard Array of button rows, each represented by an Array of KeyboardButton objects
