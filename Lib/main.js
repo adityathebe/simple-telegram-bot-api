@@ -15,7 +15,7 @@ class TelegramBot {
       caption,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendVideo');
+    return this._makeAPIRequest(jsondata, 'sendVideo');
   }
 
   sendPhoto(receiver, photoId, caption) {
@@ -25,7 +25,7 @@ class TelegramBot {
       caption,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendPhoto');
+    return this._makeAPIRequest(jsondata, 'sendPhoto');
   }
 
   sendAudio(receiver, audioId) {
@@ -35,7 +35,7 @@ class TelegramBot {
       caption,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendMessage');
+    return this._makeAPIRequest(jsondata, 'sendMessage');
   }
 
   /**
@@ -63,7 +63,7 @@ class TelegramBot {
       reply_to_message_id: replyToMessageId,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendMessage');
+    return this._makeAPIRequest(jsondata, 'sendMessage');
   }
 
   /**
@@ -81,7 +81,7 @@ class TelegramBot {
       disable_notification: disableNotification,
     };
 
-    return this.makeAPIRequest(jsondata, 'forwardMessage');
+    return this._makeAPIRequest(jsondata, 'forwardMessage');
   }
 
   /**
@@ -99,7 +99,7 @@ class TelegramBot {
       disable_web_page_preview: disableWebPagePreview,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendMessage');
+    return this._makeAPIRequest(jsondata, 'sendMessage');
   }
 
   sendMediaGroup(receiver, inputMediaPhoto, { parseMode = 'html', disableWebPagePreview = false } = {}) {
@@ -110,7 +110,7 @@ class TelegramBot {
       disable_web_page_preview: disableWebPagePreview,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendMediaGroup');
+    return this._makeAPIRequest(jsondata, 'sendMediaGroup');
   }
 
   sendDocument(receiver, fileId) {
@@ -119,7 +119,7 @@ class TelegramBot {
       chat_id: receiver,
     };
 
-    return this.makeAPIRequest(jsondata, 'sendDocument');
+    return this._makeAPIRequest(jsondata, 'sendDocument');
   }
 
   deleteMessage(chatId, messageId) {
@@ -127,7 +127,7 @@ class TelegramBot {
       chat_id: chatId,
       message_id: messageId,
     };
-    return this.makeAPIRequest(jsondata, 'deleteMessage');
+    return this._makeAPIRequest(jsondata, 'deleteMessage');
   }
 
   editMessage(chatId, messageId, editedMessage, { inlineKeyboardMarkup, parseMode = 'html' } = {}) {
@@ -139,7 +139,22 @@ class TelegramBot {
       parse_mode: parseMode,
     };
 
-    return this.makeAPIRequest(jsondata, 'editMessageText');
+    return this._makeAPIRequest(jsondata, 'editMessageText');
+  }
+
+  /**
+   * Use this method when you need to tell the user that something is happening on the bot's side.
+   * The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
+   * @param {Number|String} chatId Unique identifier for the target chat or username of the target channel
+   * @param {'typing' | 'upload_photo' | 'record_video' | 'upload_video' | 'record_audio' | 'upload_audio' | 'upload_document' | 'find_location' | 'record_video_note' | 'upload_video_note'} actionType Unique identifier for the target chat or username of the target channel
+   */
+  sendChatAction(chatId, actionType) {
+    const jsondata = {
+      chat_id: chatId,
+      action: actionType,
+    };
+
+    return this._makeAPIRequest(jsondata, 'sendChatAction');
   }
 
   getAdminList(chatId) {
@@ -147,7 +162,7 @@ class TelegramBot {
       chat_id: chatId,
     };
 
-    return this.makeAPIRequest(jsondata, 'getChatAdministrators');
+    return this._makeAPIRequest(jsondata, 'getChatAdministrators');
   }
 
   getFileMeta(fileId) {
@@ -155,11 +170,11 @@ class TelegramBot {
       file_id: fileId,
     };
 
-    return this.makeAPIRequest(jsondata, 'getFile');
+    return this._makeAPIRequest(jsondata, 'getFile');
   }
 
   getMe() {
-    return this.makeAPIRequest({}, 'getMe');
+    return this._makeAPIRequest({}, 'getMe');
   }
 
   getFileUrl(filePath) {
@@ -203,24 +218,46 @@ class TelegramBot {
     return callSendAPI(jsondata, 'unbanChatMember');
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Webhooks /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Use this method to specify a url and receive incoming updates via an outgoing webhook
+   * @param {String} webhookUrl
+   */
   setWebhook(webhookUrl) {
     const url = `https://api.telegram.org/${this.apiKey}/setWebhook?url=${webhookUrl}`;
     return makeGetRequest(url);
   }
 
+  /**
+   * @typedef WebhookInfo
+   * @property {String} url Webhook URL, may be empty if webhook is not set up
+   * @property {Boolean} has_custom_certificate True, if a custom certificate was provided for webhook certificate checks
+   * @property {Number} pending_update_count Number of updates awaiting delivery
+   * @property {Number} [last_error_date] Unix time for the most recent error that happened when trying to deliver an update via webhook
+   * @property {String} [last_error_message] Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
+   * @property {Number} [max_connections] Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+   * @property {String[]} [allowed_updatesOptional] A list of update types the bot is subscribed to. Defaults to all update types
+   * @typedef webhookInfoResponse
+   * @property {Boolean} ok
+   * @property {WebhookInfo} result
+   * @returns {webhookInfoResponse}
+   */
   getWebhookInfo() {
     const url = `https://api.telegram.org/${this.apiKey}/getWebhookInfo`;
     return makeGetRequest(url);
   }
 
-  makeAPIRequest(jsondata, methodType) {
+  _makeAPIRequest(jsondata, methodType) {
     const apiEndpoint = `/${this.apiKey}/${methodType}`;
     return makePostRequest(apiEndpoint, jsondata);
   }
 
-  //////////////////////
-  // Static Functions //
-  //////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////  Static Functions ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /**
    * Returns the necessary markup for inline keyboards
