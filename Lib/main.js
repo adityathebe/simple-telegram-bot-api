@@ -102,6 +102,26 @@ class TelegramBot {
     return this._makeAPIRequest(jsondata, 'sendMessage');
   }
 
+  /**
+   * Use this method to send answers to callback queries sent from inline keyboards
+   * @param {String} callbackQueryId
+   * @param {Object} param1
+   * @param {String} [param1.text]
+   * @param {String} [param1.url]
+   * @param {Number} [param1.cacheTime]
+   * @param {Boolean} [param1.showAlert]
+   */
+  answerCallbackQuery(callbackQueryId, { text, url, cacheTime, showAlert } = {}) {
+    const jsondata = {
+      text,
+      url,
+      callback_query_id: callbackQueryId,
+      cache_time: cacheTime,
+      show_alert: showAlert,
+    };
+    return this._makeAPIRequest(jsondata, 'answerCallbackQuery');
+  }
+
   sendMediaGroup(receiver, inputMediaPhoto, { parseMode = 'html', disableWebPagePreview = false } = {}) {
     const jsondata = {
       media: inputMediaPhoto,
@@ -130,6 +150,15 @@ class TelegramBot {
     return this._makeAPIRequest(jsondata, 'deleteMessage');
   }
 
+  /**
+   * Use this method to edit text and game messages
+   * @param {Number | String} chatId
+   * @param {Number} messageId
+   * @param {String} editedMessage
+   * @param {Object} [param3]
+   * @param {InlineKeyboard} [param3.inlineKeyboardMarkup]
+   * @param {'html'|'markdown'} [param3.parseMode]
+   */
   editMessage(chatId, messageId, editedMessage, { inlineKeyboardMarkup, parseMode = 'html' } = {}) {
     let jsondata = {
       chat_id: chatId,
