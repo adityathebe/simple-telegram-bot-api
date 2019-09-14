@@ -1,17 +1,18 @@
 const https = require('https');
 
-const makeGetRequest = url => {
+const httpsAgent = new https.Agent({ keepAlive: true });
+
+const makeGetRequest = queryUrl => {
   return new Promise((resolve, reject) => {
-    https
-      .get(url, resp => {
-        let data = '';
-        resp.on('data', chunk => (data += chunk)).on('end', () => resolve(JSON.parse(data)));
-      })
-      .on('error', reject);
+    const req = https.get(queryUrl, resp => {
+      let data = '';
+      resp.on('data', chunk => (data += chunk)).on('end', () => resolve(JSON.parse(data)));
+    });
+    req.on('error', reject);
   });
 };
 
-const makePostRequest = (urlPath, body) => {
+const makePostRequest = (urlPath, body, { keepAlive }) => {
   return new Promise((resolve, reject) => {
     const jsonBody = JSON.stringify(body);
     const options = {
@@ -25,6 +26,8 @@ const makePostRequest = (urlPath, body) => {
       },
     };
 
+    if (keepAlive) options.agent = httpsAgent;
+
     const req = https.request(options, res => {
       let data = '';
       res.setEncoding('utf8');
@@ -37,9 +40,3 @@ const makePostRequest = (urlPath, body) => {
 };
 
 module.exports = { makeGetRequest, makePostRequest };
-
-if (require.main === module) {
-  makeGetRequest('https://jsonplaceholder.typicode.com/todos/1').then(data => {
-    console.log(data);
-  });
-}

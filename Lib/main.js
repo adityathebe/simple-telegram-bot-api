@@ -1,11 +1,21 @@
 const { makeGetRequest, makePostRequest } = require('./utils');
 
 class TelegramBot {
-  constructor(apiKey, username) {
+  /**
+   * @constructor
+   * @param {String} apiKey
+   * @param {String} username
+   * @param {Object} [options]
+   * @param {Boolean} [options.useSingleHttpsAgent] Use single tcp connection. Default = true
+   */
+  constructor(apiKey, username, options = {}) {
     if (!apiKey) throw new Error('Please provide telegram api key');
 
     this.apiKey = apiKey;
     this.username = username;
+    this.options = {};
+    this.options.useSingleHttpsAgent =
+      typeof options.useSingleHttpsAgent === 'boolean' ? options.useSingleHttpsAgent : true;
   }
 
   sendVideo(receiver, videoId, caption) {
@@ -281,7 +291,7 @@ class TelegramBot {
 
   _makeAPIRequest(jsondata, methodType) {
     const apiEndpoint = `/${this.apiKey}/${methodType}`;
-    return makePostRequest(apiEndpoint, jsondata);
+    return makePostRequest(apiEndpoint, jsondata, { keepAlive: this.options.useSingleHttpsAgent });
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
